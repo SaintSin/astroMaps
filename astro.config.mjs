@@ -1,6 +1,7 @@
 // @ts-check
 
 import sitemap from '@astrojs/sitemap';
+import solidJs from '@astrojs/solid-js';
 import { defineConfig } from 'astro/config';
 import icon from 'astro-icon';
 
@@ -9,6 +10,6 @@ export default defineConfig({
   image: {
     responsiveStyles: true,
   },
-  integrations: [sitemap(), icon()],
+  integrations: [sitemap(), icon(), solidJs()],
   site: 'http://localhost/',
 });

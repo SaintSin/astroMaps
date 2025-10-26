@@ -1,0 +1,50 @@
+---
+const {
+  apiKey,
+  lat,
+  lng,
+  zoom = 14,
+  mapId = '17772c3c04aadeaa',
+  mapTitle,
+  markerTitle = 'Property Location',
+  className = 'mapmaster',
+} = Astro.props;
+---
+
+{mapTitle && <h2>{mapTitle}</h2>}
+
+{apiKey ? (
+  <div id="map" class={className} style="min-height: 400px; width: 100%;"></div>
+  <script define:vars={{ apiKey, lat, lng, zoom, mapId, markerTitle }}>
+    const mapDiv = document.getElementById('map');
+
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        console.log('Map is visible, loading script...');
+        
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}`;
+        script.async = true;
+        script.defer = true;
+        document.head.appendChild(script);
+
+        script.onload = () => {
+          import('/src/components/map-loader.js').then(({ default: initializeMap }) => {
+            initializeMap(lat, lng, zoom, mapId, markerTitle);
+          });
+        };
+
+        observer.disconnect();
+      }
+    }, { threshold: 0.1 });
+
+    observer.observe(mapDiv);
+  </script>
+) : (
+  <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: #f0f0f0; color: #666; min-height: 400px;">
+    <div style="text-align: center;">
+      <p style="margin: 0 0 10px 0;">🗺️ Map unavailable</p>
+      <p style="margin: 0; font-size: 0.9em;">Google Maps API key not configured</p>
+    </div>
+  </div>
+)}
